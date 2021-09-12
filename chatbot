@@ -49,3 +49,13 @@
 
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect sent)
+(dl.util.fmessage "Loaded Insitux chatbot!
+Commands:
+  team security - switch to the Security team
+  team insurgent - switch to the Insurgent team
+  kill [player name] - kill player
+  brrr [player name] - order airstrike on player
+  flare - fire a flare above yourself
+  flare [player name] - fire a flare above a player
+  explode [player] - kill player with an explosion
+  explode near [player] - cause an explosion near the player")
