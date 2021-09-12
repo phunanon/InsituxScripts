@@ -1,3 +1,4 @@
+(function chatbot-extra sender channel msg null)
 (function sent sender channel msg
 ; Only works in testing channel atm
 ;  (when (starts-with? msg "(")
@@ -50,7 +51,8 @@
     (let rands (map rand-num [-16 0 -16] [16 16 16]))
     (let pos (if is-near (map + pos rands) pos))
     (dl.util.explosion pos "TestGrenade")
-    (dl.util.fmessage (str "exploded " body))))
+    (dl.util.fmessage (str "exploded " body)))
+  (chatbot-extra sender channel msg))
 
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect sent)
