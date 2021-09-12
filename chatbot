@@ -1,0 +1,51 @@
+(function sent sender channel msg
+; Only works in testing channel atm
+;  (when (starts-with? msg "(")
+;    (dl.util.fmessage (eval msg)))
+
+  (let parts (split msg))
+  (let cmd (0 parts))
+  (let body (join (sect parts)))
+  (let body (if (!= body "") body))
+
+  (when (= cmd "team")
+    ((str "$dl.players." sender ".team")
+     body)
+    (dl.util.fmessage (str sender " team changed to " body)))
+
+  (when (= cmd "kill")
+    ((str "dl.players." body ".kill"))
+    (dl.util.fmessage (str body " killed")))
+
+  (when (= cmd "brrr")
+    (let pos (position (str "dl.players." body)))
+    (let i 0)
+    (while (< i 100)
+      (let i (inc i))
+      (wait .01)
+      (let coord (- (* i 2) 100))
+      (dl.util.explosion (map + [coord 0 0] pos))))
+
+  (when (= cmd "flare")
+    (let pos (position (str "dl.players." (or body sender))))
+    (dl.util.explosion (map + [0 100 0] pos) "TestGrenade"))
+
+  (when (= cmd "teleport")
+    (let is-to (= (1 parts) "to"))
+    (let a (if is-to (2 parts) sender))
+    (let b (if is-to sender body))
+    (position (str "dl.players." a)
+              (position "dl.players." b))
+    (dl.util.fmessage (str "teleported " a " to " b)))
+
+  (when (= cmd "explode")
+    (let is-near (= (1 parts) "near"))
+    (let player ((if is-near 2 1) parts))
+    (let pos (position (str "dl.players." player)))
+    (let rands (map rand-num [-16 0 -16] [16 16 16]))
+    (let pos (if is-near (map + pos rands) pos))
+    (dl.util.explosion pos "TestGrenade")
+    (dl.util.fmessage (str "exploded " body))))
+
+(dl.events.on_chat_message.kill)
+(dl.events.on_chat_message.connect sent)
