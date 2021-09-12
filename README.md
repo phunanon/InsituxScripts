@@ -6,4 +6,9 @@ If there are any problems or feedback join the [**Discord server**](https://disc
 
 ### [chatbot](https://phunanon.github.io/InsituxScripts/chatbot.txt)
 `(load "https://phunanon.github.io/InsituxScripts/chatbot.txt")`  
-Allows players to enter useful and fun commands in the chat such as for team switching, teleporting, causing explosions, killing with *brrr*...
+Allows players to enter useful and fun commands in the chat such as for team switching, teleporting, causing explosions, killing with *brrr*...  
+Optionally extend this chatbot by writing your own functions **after** you have loaded it:  
+```clj
+(function chatbot-extra sender channel message
+  ... do something...)
+```
