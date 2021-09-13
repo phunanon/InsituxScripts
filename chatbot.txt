@@ -25,7 +25,8 @@
       (let i (inc i))
       (wait .01)
       (let coord (- (* i 2) 100))
-      (dl.util.explosion (map + [coord 0 0] pos))))
+      (let rands [(rand-num) (rand-num) (rand-num)])
+      (dl.util.explosion (map + [coord 0 0] rands pos))))
 
   (when (= cmd "flare")
     (let pos (position (str "dl.players." (or body sender))))
