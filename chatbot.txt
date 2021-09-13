@@ -2,6 +2,9 @@
 ;Poly-fill until higher Insitux version
 (function rand to (/ (rand-num (* to 1000)) 1000))
 
+(function pos-fmt pos
+  (str (round (0 pos)) ", " (round (2 pos))))
+
 (function rand-near pos dist
   ;Needs higher Insitux version:
   ;(let angle (rand (* 2 (pi))))
@@ -13,12 +16,12 @@
   (let point [(* (0 xz) dist) 0 (* (1 xz) dist)])
   (map + point pos))
 
-(function frac->coords map-name xyz
-  (let dimensions {
-    "dl_shipment" [[639 424 -134] [-494 414 -551]]})
-  (let dimensions (dimensions map-name))
-  (let diffs (.. map - dimensions))
-  (map + (map * xyz diffs) (1 dimensions)))
+;(function frac->coords map-name xyz
+;  (let dimensions {
+;    "dl_shipment" [[639 424 -134] [-494 414 -551]]})
+;  (let dimensions (dimensions map-name))
+;  (let diffs (.. map - dimensions))
+;  (map + (map * xyz diffs) (1 dimensions)))
 
 (function sent sender channel msg
 ;Needs higher Insitux version
@@ -48,13 +51,13 @@
     (dl.util.fmessage (str "Teleported " a " to " b)))
 
   (when (= cmd "brrr")
-    (dl.util.fmessage (str "Airstrike target acquired: " body))
+    (dl.util.fmessage (str "Airstrike target locked: " body))
     (wait 1)
-    (dl.util.fmessage "Coming in hot in 5...")
+    (dl.util.fmessage "Coming in hot in 5")
     (wait 1)
-    (dl.util.fmessage "4...")
+    (dl.util.fmessage "4")
     (wait 1)
-    (dl.util.fmessage "3...")
+    (dl.util.fmessage "3")
     (wait 1)
     (dl.util.fmessage "2...")
     (wait 2)
@@ -68,14 +71,15 @@
     (dl.util.fmessage (str body " has been brrr'd.")))
 
   (when (= cmd "drone")
-    (let player (or sender body))
-    (dl.util.fmessage (str "Drone strike on " player " in 5..."))
+    (let player (or body sender))
+    (let pos (position (str "dl.players." player)))
+    (dl.util.fmessage "Position locked!")
+    (dl.util.fmessage "Drone strike in 4")
     (wait 1)
-    (dl.util.fmessage "4...")
+    (dl.util.fmessage "3")
     (wait 1)
-    (dl.util.fmessage "3...")
-    (wait 3)
-    (let pos (position (str "dl.players." body)))
+    (dl.util.fmessage "2...")
+    (wait 2)
     ;Replace with `range` once fixed in Deadline
     (let i 0)
     (let lim (+ 5 (rand 5)))
@@ -95,7 +99,7 @@
   (when (= cmd "position")
     (let player (or body sender))
     (let pos (position (str "dl.players." player)))
-    (dl.util.fmessage (str (round (0 pos)) ", " (round (2 pos)))))
+    (dl.util.fmessage (pos-fmt pos)))
 
   (when (= cmd "heal")
     (let player (or body sender))
@@ -124,7 +128,8 @@ Commands:
   kill [player] - kill player
   heal - heal yourself fully
   heal [player] - heal a player fully
-  drone [player] - order drone strike on player
+  drone - order drone strike on your position
+  drone [player] - order drone strike on player's position
   brrr [player] - order airstrike on player
   flare - fire a flare above yourself
   flare [player] - fire a flare above a player
