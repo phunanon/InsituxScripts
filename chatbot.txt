@@ -42,7 +42,7 @@
   (when (= cmd "position")
     (let player (or body sender))
     (let pos (position (str "dl.players." player)))
-    (dl.util.fmessage (str "Position of " player ": " (0 pos) ", " (2 pos))))
+    (dl.util.fmessage (str (round (0 pos)) ", " (round (2 pos)))))
 
   (when (= cmd "explode")
     (let is-near (= (1 parts) "near"))
