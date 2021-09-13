@@ -1,8 +1,11 @@
 
+;Poly-fill until higher Insitux version
+(function rand to (/ (rand-num (* to 1000)) 1000))
+
 (function rand-near pos dist
   ;Needs higher Insitux version:
   ;(let angle (rand (* 2 (pi))))
-  (let angle (/ 50 (rand-num 314)))
+  (let angle (/ 50 (rand 314)))
   (let xz [(cos angle) (sin angle)])
   ;(let point [(cos angle) 0 (sin angle)])
   ;Broken in Deadline:
@@ -38,14 +41,43 @@
     (dl.util.fmessage (str "Teleported " a " to " b)))
 
   (when (= cmd "brrr")
+    (dl.util.fmessage (str "Airstrike target acquired: " body))
+    (wait 1)
+    (dl.util.fmessage "Coming in hot in 5...")
+    (wait 1)
+    (dl.util.fmessage "4...")
+    (wait 1)
+    (dl.util.fmessage "3...")
+    (wait 1)
+    (dl.util.fmessage "2...")
+    (wait 2)
     (let pos (position (str "dl.players." body)))
     (let i 0)
     (while (< i 100)
       (let i (inc i))
       (wait .01)
-      (let rands [(rand-num 10) 0 (rand-num 10)])
+      (let rands [(rand 10) 0 (rand 10)])
       (dl.util.explosion (map + [(- (* i 2) 100) 0 0] rands pos)))
-    (dl.util.fmessage (str "Brrr'd " body)))
+    (dl.util.fmessage (str body " has been brrr'd.")))
+
+  (when (= cmd "drone")
+    (let player (or sender body))
+    (dl.util.fmessage (str "Drone strike on " player " in 5..."))
+    (wait 1)
+    (dl.util.fmessage "4...")
+    (wait 1)
+    (dl.util.fmessage "3...")
+    (wait 3)
+    (let pos (position (str "dl.players." body)))
+    ;Replace with `range` once fixed in Deadline
+    (let i 0)
+    (let lim (+ 5 (rand 5)))
+    (while (< i lim)
+      (let i (inc i))
+      (wait .25)
+      (let rands [(rand 100) 30 (rand 100)])
+      (dl.util.explosion (map + rands pos)))
+    (dl.util.fmessage "Drone strike complete."))
 
   (when (= cmd "flare")
     (let who (or body sender))
@@ -84,6 +116,7 @@ Commands:
   kill [player] - kill player
   heal - heal yourself fully
   heal [player] - heal a player fully
+  drone [player] - order drone strike on player
   brrr [player] - order airstrike on player
   flare - fire a flare above yourself
   flare [player] - fire a flare above a player
