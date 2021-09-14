@@ -1,0 +1,84 @@
+(function p-info name
+  (let prefix (str "dl.players." name))
+  {:name name
+   :pos  (position prefix)
+   :team (team     prefix)
+   :hp   (health   prefix)})
+
+;Remove upon Insitux 0914 in favour of `push`
+(function -drop-key kv (!= (0 kv) rem-key))
+(function drop-key d key
+  (var rem-key key)
+  (let filtered (filter -drop-key d))
+  (if (empty? filtered) {}
+    (.. .. dict (filter -drop-key d))))
+
+(function is-near? x0 y0 z0 x1 y1 z1 dist
+  (> dist (sqrt
+    (+ (** (- x0 x1))
+       (** (- y0 y1))
+       (** (- z0 z1))))))
+
+;{123 {:id 123 :team "name" :by "name" :pos [x y z]}}
+(var plants {})
+
+(function on-msg sender channel message
+  (when (= message "off")
+    (ticked.kill))
+  ;Upon version 0914
+  ;(when (!= message "plant") (return))
+  (when (= message "plant")
+    (let player (p-info sender))
+    (let team   (:team player))
+    (let pos    (:pos player))
+    (let id     (time))
+    (var plants (push plants id {:id id :team team :by sender :pos pos}))
+    (dl.util.fmessage "Claymore planted.")))
+
+(function player-claymore player-pos-team
+  (let name (0 player-pos-team))
+  (let pos (1 player-pos-team))
+  (let team (2 player-pos-team))
+  (when (and (!= (:by plant) name)
+             (or is-tk (!= (:team plant) team))
+             (.. is-near? pos (:pos plant) 4))
+    ;use `push` to remove key upon Insitux version 0914
+    (var plants (drop-key plants (:id plant)))
+    (dl.util.explosion (:pos plant) "TestGrenade")
+    (dl.util.fmessage
+      (str name " tripped " (:by plant) "'s claymore!"))))
+
+;Upon Deadline fix use `for`
+(function as-prefix player
+  (str "dl.players." player))
+
+;Upon Deadline fix use `for`
+(function claymore -plant
+  (var plant (1 -plant))
+  (map player-claymore players))
+
+;Remove if Insitux can ever map over external functions
+(function -position x (position x))
+(function -team x (team x))
+
+(function is-alive? player
+  ((str "dl.players." player ".is_alive")))
+
+(var next-tick (time))
+(function on-tick
+  (when (< next-tick (time))
+    (var next-tick (+ next-tick 1000))
+
+    (var is-tk $dl.globals.team_kill)
+    (var players (filter is-alive? (dl.list_players)))
+    (var p-infos (map as-prefix players))
+    (let positions (map -position p-infos))
+    (let teams     (map -team     p-infos))
+    (var players (map vec players positions teams))
+;Upon Deadline fix use `for`
+    (map claymore plants)))
+
+(ticked.kill)
+(dl.events.on_chat_message.kill)
+(ticked.connect on-tick)
+(dl.events.on_chat_message.connect on-msg)
