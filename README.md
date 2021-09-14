@@ -16,3 +16,8 @@ Optionally extend this chatbot by writing your own functions **after** you have 
 (function chatbot-extra sender channel message
   … do something …)
 ```
+
+### (For Coders) Import Function
+`(load "https://phunanon.github.io/InsituxScripts/funcs.txt")`  
+Enables loading functions from the `func` directory of this repository as easy as:  
+`(load-func "is-near?")`
