@@ -1,2 +1,3 @@
 (function load-func name
-  (load (str "https://phunanon.github.io/InsituxScripts/funcs/" name ".txt")))
+  (let sanitised (join (split name "?") "Q"))
+  (load (str "https://phunanon.github.io/InsituxScripts/funcs/" sanitised ".txt")))
