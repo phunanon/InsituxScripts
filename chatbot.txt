@@ -23,7 +23,7 @@
 ;  (let diffs (.. map - dimensions))
 ;  (map + (map * xyz diffs) (1 dimensions)))
 
-;Replace ' with " upon higher Insitux version
+;Replace ' with " upon Insitux version 0914
 (var cmds "Note: where it says [player] replace with a player's name
     e.g. kill Player123
 Commands:
@@ -137,4 +137,5 @@ Commands:
 (function chatbot-extra sender channel msg null)
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect sent)
-(dl.util.fmessage "Loaded Insitux chatbot! Chat \"cmds\" to see list of available commands.")
+;Replace ' with " upon Insitux version 0914
+(dl.util.fmessage "Loaded Insitux chatbot! Chat 'cmds' to see list of available commands.")
