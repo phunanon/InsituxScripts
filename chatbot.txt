@@ -23,24 +23,19 @@
 ;  (let diffs (.. map - dimensions))
 ;  (map + (map * xyz diffs) (1 dimensions)))
 
+;Replace ' with " upon higher Insitux version
 (var cmds "Note: where it says [player] replace with a player's name
     e.g. kill Player123
 Commands:
-  cmds - show this message again
-  team security - switch to the Security team
-  team insurgent - switch to the Insurgent team
-  kill [player] - kill player
-  heal - heal yourself fully
-  heal [player] - heal a player fully
-  drone - order drone strike on your position
-  drone [player] - order drone strike on player's position
-  brrr [player] - order airstrike on player
-  flare - fire a flare above yourself
-  flare [player] - fire a flare above a player
-  explode [player] - kill player with an explosion
-  explode near [player] - cause an explosion near the player
-  position - write your position to the chat
-  position [player] - write a player's position to the chat")
+  'team security' or 'team insurgent' - switch to either team
+  'kill [player]' - kill player
+  'heal' or 'heal [player]' - heal yourself or a player fully
+  'drone' or 'drone [player]' - order drone strike on your or a player's position
+  'brrr [player]' - order airstrike on player
+  'flare' or 'flare [player]' - fire a flare above yourself or another player
+  'explode [player]' - kill player with an explosion
+  'explode near [player]' - cause an explosion near the player (non-lethal)
+  'position' or 'position [player]' - write your or a player's position to the chat")
 
 (function sent sender channel msg
 ;Needs higher Insitux version
