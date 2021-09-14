@@ -1,2 +1,2 @@
 (function load-func name
-  (load (str "https://phunanon.github.io/InsituxScripts/" name)))
+  (load (str "https://phunanon.github.io/InsituxScripts/funcs/" name)))
