@@ -1,0 +1,10 @@
+;Spells out number digits as words
+(function spell-out n
+  (let num (round n))
+  (when (zero? n) (return "zero"))
+  (let text "")
+  (let nums ["zero" "one" "two" "three" "four" "five" "six" "seven" "eight" "nine"])
+  (while (<= 1 num)
+    (let text (str " " ((rem (floor num) 10) nums) text))
+    (let num (/ num 10)))
+  (sect text))
