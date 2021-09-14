@@ -23,22 +23,45 @@
 ;  (let diffs (.. map - dimensions))
 ;  (map + (map * xyz diffs) (1 dimensions)))
 
+(var cmds "Note: where it says [player] replace with a player's name
+    e.g. kill Player123
+Commands:
+  cmds - show this message again
+  team security - switch to the Security team
+  team insurgent - switch to the Insurgent team
+  kill [player] - kill player
+  heal - heal yourself fully
+  heal [player] - heal a player fully
+  drone - order drone strike on your position
+  drone [player] - order drone strike on player's position
+  brrr [player] - order airstrike on player
+  flare - fire a flare above yourself
+  flare [player] - fire a flare above a player
+  explode [player] - kill player with an explosion
+  explode near [player] - cause an explosion near the player
+  position - write your position to the chat
+  position [player] - write a player's position to the chat")
+
 (function sent sender channel msg
 ;Needs higher Insitux version
 ; (when (starts-with? msg "(")
 ;   (dl.util.fmessage (eval msg)))
+
 
   (let parts (split msg))
   (let cmd (0 parts))
   (let body (join (sect parts)))
   (let body (if (!= body "") body))
 
-  (when (= cmd "team")
+  (when (= cmd "cmds")
+    (dl.util.fmessage cmds))
+
+  (when (and (= cmd "team") (["security" "insurgent"] body))
     ((str "$dl.players." sender ".team")
      body)
     (dl.util.fmessage (str sender " team changed to " body)))
 
-  (when (= cmd "kill")
+  (when (and (= cmd "kill") body)
     ((str "dl.players." body ".kill"))
     (dl.util.fmessage (str "Killed " body)))
 
@@ -50,7 +73,7 @@
      (position (str "dl.players." b)))
     (dl.util.fmessage (str "Teleported " a " to " b)))
 
-  (when (= cmd "brrr")
+  (when (and (= cmd "brrr") body)
     (dl.util.fmessage (str "Airstrike target locked: " body))
     (wait 1)
     (dl.util.fmessage "Coming in hot in 5")
@@ -106,7 +129,7 @@
     ((str "$dl.players." player ".health") 100)
     (dl.util.fmessage (str "Healed " player)))
 
-  (when (= cmd "explode")
+  (when (and (= cmd "explode") body)
     (let is-near (= (1 parts) "near"))
     (let player ((if is-near 2 1) parts))
     (let pos (position (str "dl.players." player)))
@@ -119,21 +142,5 @@
 (function chatbot-extra sender channel msg null)
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect sent)
-(dl.util.fmessage "Loaded Insitux chatbot!
-Note: where it says [player] replace with a player's name
-    e.g. kill Player123
-Commands:
-  team security - switch to the Security team
-  team insurgent - switch to the Insurgent team
-  kill [player] - kill player
-  heal - heal yourself fully
-  heal [player] - heal a player fully
-  drone - order drone strike on your position
-  drone [player] - order drone strike on player's position
-  brrr [player] - order airstrike on player
-  flare - fire a flare above yourself
-  flare [player] - fire a flare above a player
-  explode [player] - kill player with an explosion
-  explode near [player] - cause an explosion near the player
-  position - write your position to the chat
-  position [player] - write a player's position to the chat")
+(dl.util.fmessage "Loaded Insitux chatbot!")
+(dl.util.fmessage cmds)
