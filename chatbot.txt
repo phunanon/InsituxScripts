@@ -1,6 +1,7 @@
 
 ;Poly-fill until higher Insitux version
 (function rand to (/ (rand-num (* to 1000)) 1000))
+(function rand-ab a b (/ (rand-num (* a 1000) (* b 1000)) 1000))
 
 (function pos-fmt pos
   (str (round (0 pos)) ", " (round (2 pos))))
@@ -104,7 +105,7 @@ Commands:
     (while (< i lim)
       (let i (inc i))
       (wait .25)
-      (let rands [(rand 100) 30 (rand 100)])
+      (let rands [(rand-ab -50 50) 30 (rand-ab -50 50)])
       (dl.util.explosion (map + rands pos)))
     (dl.util.fmessage "Drone strike complete."))
 
