@@ -41,7 +41,7 @@
   (let team (2 player-pos-team))
   (when (and (!= (:by plant) name)
              (or is-tk (!= (:team plant) team))
-             (.. is-near? pos (:pos plant) 4))
+             (.. is-near? pos (:pos plant) 6))
     ;use `push` to remove key upon Insitux version 0914
     (var plants (drop-key plants (:id plant)))
     (dl.util.explosion (:pos plant) "TestGrenade")
@@ -67,7 +67,7 @@
 (var next-tick (time))
 (function on-tick
   (when (< next-tick (time))
-    (var next-tick (+ next-tick 1000))
+    (var next-tick (+ next-tick 250))
 
     (var is-tk $dl.globals.team_kill)
     (var players (filter is-alive? (dl.list_players)))
