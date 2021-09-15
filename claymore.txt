@@ -24,7 +24,8 @@
 
 (function on-msg sender channel message
   (when (= message "off")
-    (ticked.kill))
+    (ticked.kill)
+    (dl.util.fmessage "Claymore script disabled."))
   ;Upon version 0914
   ;(when (!= message "plant") (return))
   (when (= message "plant")
