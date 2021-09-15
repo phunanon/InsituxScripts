@@ -33,7 +33,8 @@
     (let pos    (:pos player))
     (let id     (time))
     (var plants (push plants id {:id id :team team :by sender :pos pos}))
-    (dl.util.fmessage "Claymore planted.")))
+    (dl.util.fmessage "Claymore planted.")
+    (dl.util.fmessage (str (len plants) " set."))))
 
 (function player-claymore player-pos-team
   (let name (0 player-pos-team))
@@ -46,7 +47,8 @@
     (var plants (drop-key plants (:id plant)))
     (dl.util.explosion (:pos plant) "TestGrenade")
     (dl.util.fmessage
-      (str name " tripped " (:by plant) "'s claymore!"))))
+      (str name " tripped " (:by plant) "'s claymore!"))
+    (dl.util.fmessage (str (len plants) " set."))))
 
 ;Upon Deadline fix use `for`
 (function as-prefix player
