@@ -36,7 +36,7 @@ Commands:
   'flare' or 'flare [player]' - fire a flare above yourself or another player
   'explode [player]' - kill player with an explosion
   'explode near [player]' - cause an explosion near the player (non-lethal)
-  'position' or 'position [player]' - write your or a player's position to the chat")
+  'teleport [player]' or 'teleport to [player]' - teleport a player to you or vice versa")
 
 (function sent sender channel msg
 ;Needs higher Insitux version
@@ -63,8 +63,8 @@ Commands:
 
   (when (= cmd "teleport")
     (let is-to (= (1 parts) "to"))
-    (let a (if is-to (2 parts) sender))
-    (let b (if is-to sender (1 parts)))
+    (let a (if is-to sender (2 parts)))
+    (let b (if is-to (1 parts) sender))
     ((str "$dl.players." a ".position")
      (position (str "dl.players." b)))
     (dl.util.fmessage (str "Teleported " a " to " b)))
