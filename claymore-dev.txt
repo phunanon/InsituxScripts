@@ -42,7 +42,7 @@
   (when (= message "plant")
     (let player (p-info sender))
     (let team   (:team player))
-    (let pos    (map + [10 0 0] (:pos player))) ;TODO remove after testing
+    (let pos    (:pos player))
     (let id     (time))
     (var plants (push plants id {:id id :team team :by sender :pos pos}))
     (dl.util.fmessage "Claymore planted.")
@@ -52,7 +52,7 @@
   (let name (0 player-pos-team))
   (let pos (1 player-pos-team))
   (let team (2 player-pos-team))
-  (when (and ;(!= (:by plant) name) TODO reinstate after testing
+  (when (and (!= (:by plant) name)
              (or is-tk (!= (:team plant) team))
              (.. is-near? pos (:pos plant) 6))
     ;use `push` to remove key upon Insitux version 0914
