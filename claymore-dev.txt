@@ -22,16 +22,27 @@
 ;{123 {:id 123 :team "name" :by "name" :pos [x y z]}}
 (var plants {})
 
+(function boom p
+  (dl.util.explosion (:pos (1 p)) "TestGrenade"))
+
+(var off false)
 (function on-msg sender channel message
+
   (when (= message "off")
-    (ticked.kill)
+    (var off true)
     (dl.util.fmessage "Claymore script disabled."))
+
+  (when (= message "boom")
+    (map boom plants)
+    (var plants {})
+    (dl.util.fmessage "All claymores detonated!"))
+
   ;Upon version 0914
   ;(when (!= message "plant") (return))
   (when (= message "plant")
     (let player (p-info sender))
     (let team   (:team player))
-    (let pos    (:pos player))
+    (let pos    (map + [10 0 0] (:pos player))) ;TODO remove after testing
     (let id     (time))
     (var plants (push plants id {:id id :team team :by sender :pos pos}))
     (dl.util.fmessage "Claymore planted.")
@@ -41,7 +52,7 @@
   (let name (0 player-pos-team))
   (let pos (1 player-pos-team))
   (let team (2 player-pos-team))
-  (when (and (!= (:by plant) name)
+  (when (and ;(!= (:by plant) name) TODO reinstate after testing
              (or is-tk (!= (:team plant) team))
              (.. is-near? pos (:pos plant) 6))
     ;use `push` to remove key upon Insitux version 0914
@@ -81,7 +92,7 @@
 (function on-tick
   (ticked.kill)
   (let n 0)
-  (while (< n 30)
+  (while (and (< n 30) (! off))
     (wait .25)
     (let n (inc n))
     (quarter-second))
