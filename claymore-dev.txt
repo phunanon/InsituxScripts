@@ -96,6 +96,7 @@
   (while (and (< n 30) (! off))
     (print n)
     (wait .25)
+    (print n)
     (let n (inc n))
     (print n)
     (quarter-second)
