@@ -93,6 +93,7 @@
   (ticked.kill)
   (let n 0)
   (while (and (< n 30) (! off))
+  (print "test")
     (wait .25)
     (let n (inc n))
     (quarter-second))
