@@ -83,6 +83,7 @@
   ((str "dl.players." player ".is_alive")))
 
 (function quarter-second
+(print "tick")
   (var is-tk $dl.globals.team_kill)
     (var players (filter is-alive? (dl.list_players)))
     (var p-infos (map as-prefix players))
@@ -97,16 +98,12 @@
   (let n 0)
   (print "first tick")
   (while (and (< n 30) (! off))
-    (print n)
     (wait 1)
-    (print n)
     (let n (inc n))
-    (print n)
-    (quarter-second)
-    (print n))
+    (quarter-second))
   (ticked.connect on-tick))
 
 (ticked.kill)
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect on-msg)
-(dl.util.fmessage "DEV4 Claymore chatbot active. Use 'plant' in the chat to plant one.")
+(dl.util.fmessage "DEV5 Claymore chatbot active. Use 'plant' in the chat to plant one.")
