@@ -92,8 +92,9 @@
 (function on-tick
   (ticked.kill)
   (let n 0)
+  (print "first tick")
   (while (and (< n 30) (! off))
-  (print "test")
+    (print "test")
     (wait .25)
     (let n (inc n))
     (quarter-second))
