@@ -106,4 +106,5 @@
 (ticked.kill)
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect on-msg)
-(dl.util.fmessage "DEV6 Claymore chatbot active. Use 'plant' in the chat to plant one.")
+(dl.util.fmessage "DEV7 Claymore chatbot active. Use 'plant' in the chat to plant one.")
+(on-tick)
