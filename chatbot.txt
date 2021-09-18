@@ -163,5 +163,5 @@ Commands:
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect sent)
 ;Replace ' with " upon Insitux version 0914
-(dl.util.fmessage "Loaded Insitux chatbot! Chat 'cmds' to see list of available commands.")
-(dl.util.fmessage "Note: this is a CHAT bot, you send the commands in the chat.")
+(dl.util.fmessage "Loaded Insitux chatbot! Chat 'cmds' to see list of available commands.
+Note: this is a CHAT bot, you send the commands in the chat.")
