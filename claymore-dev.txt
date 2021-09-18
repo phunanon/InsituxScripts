@@ -102,10 +102,10 @@
     (wait 0.25)
     (var n (inc n))
     (quarter-second))
-  (ticked.connect on-tick))
+  (if (! off) (ticked.connect on-tick)))
 
 (ticked.kill)
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect on-msg)
-(dl.util.fmessage "DEV8 Claymore chatbot active. Use 'plant' in the chat to plant one.")
+(dl.util.fmessage "DEV1 Claymore chatbot active. Use 'plant' in the chat to plant one.")
 (on-tick)
