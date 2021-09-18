@@ -2,6 +2,19 @@
 ;Poly-fill until higher Insitux version
 (function rand to (/ (rand-num (* to 1000)) 1000))
 (function rand-ab a b (/ (rand-num (* a 1000) (* b 1000)) 1000))
+(function ran to
+  (let arr [])
+  (while (< (len arr) to)
+    (let arr (into arr [(len arr)])))
+  arr)
+(function numbered items
+  (let l (len items))
+  (let n 0)
+  (let list [])
+  (while (< n l)
+    (let list (into list [(str (inc n) ". " (n items))]))
+    (let n (inc n)))
+  (join list "\n"))
 
 (function pos-fmt pos
   (str (round (0 pos)) ", " (round (2 pos))))
@@ -25,24 +38,31 @@
 ;  (map + (map * xyz diffs) (1 dimensions)))
 
 ;Replace ' with " upon Insitux version 0914
-(var cmds "Note: where it says [player] replace with a player's name
-    e.g. kill Player123
+(var cmds "Note: replace [player] with player name or number via 'players'
+  examples: 'heal XxPlayerxX' or 'heal 3'
 Commands:
+  'players' - list players each with a number
   'team security' or 'team insurgent' - switch to either team
-  'kill [player]' - kill player
   'heal' or 'heal [player]' - heal yourself or a player fully
-  'drone' or 'drone [player]' - order drone strike on your or a player's position
+  'drone' or 'drone [player]' - order drone strike on your or player's position
   'brrr [player]' - order airstrike on player
   'flare' or 'flare [player]' - fire a flare above yourself or another player
   'explode [player]' - kill player with an explosion
   'explode near [player]' - cause an explosion near the player (non-lethal)
-  'teleport [player]' or 'teleport to [player]' - teleport a player to you or vice versa")
+  'teleport [player]' or 'teleport to [player]' - teleport player to you or vice versa")
+
+(var players [])
+;Try rewriting in the future, so much broken atm
+(function ->name text
+  (let nums (ran (len players)))
+  (let nums (map inc nums))
+  (let i (idx (map str nums) text))
+  (if i (i players) text))
 
 (function sent sender channel msg
-;Needs higher Insitux version
+;Upon higher Insitux version
 ; (when (starts-with? msg "(")
 ;   (dl.util.fmessage (eval msg)))
-
 
   (let parts (split msg))
   (let cmd (0 parts))
@@ -52,25 +72,28 @@ Commands:
   (when (= cmd "cmds")
     (dl.util.fmessage cmds))
 
+  (when (= cmd "players")
+    (var players (dl.list_players))
+    (dl.util.fmessage (numbered players)))
+
   (when (and (= cmd "team") (["security" "insurgent"] body))
     ((str "$dl.players." sender ".team")
      body)
     (dl.util.fmessage (str sender " team changed to " body)))
 
-  (when (and (= cmd "kill") body)
-    ((str "dl.players." body ".kill"))
-    (dl.util.fmessage (str "Killed " body)))
-
   (when (= cmd "teleport")
     (let is-to (= (1 parts) "to"))
     (let a (if is-to sender (2 parts)))
     (let b (if is-to (1 parts) sender))
+    (let a (->name a))
+    (let b (->name b))
     ((str "$dl.players." a ".position")
      (position (str "dl.players." b)))
     (dl.util.fmessage (str "Teleported " a " to " b)))
 
   (when (and (= cmd "brrr") body)
-    (dl.util.fmessage (str "Airstrike target locked: " body))
+    (let player (->name body))
+    (dl.util.fmessage (str "Airstrike target locked: " player))
     (wait 1)
     (dl.util.fmessage "Coming in hot in 5")
     (wait 1)
@@ -80,17 +103,17 @@ Commands:
     (wait 1)
     (dl.util.fmessage "2...")
     (wait 2)
-    (let pos (position (str "dl.players." body)))
+    (let pos (position (str "dl.players." player)))
     (let i 0)
     (while (< i 100)
       (let i (inc i))
       (wait .01)
       (let rands [(rand 10) 0 (rand 10)])
       (dl.util.explosion (map + [(- (* i 2) 100) 0 0] rands pos)))
-    (dl.util.fmessage (str body " has been brrr'd.")))
+    (dl.util.fmessage (str player " has been brrr'd.")))
 
   (when (= cmd "drone")
-    (let player (or body sender))
+    (let player (if body (->name body) sender))
     (let pos (position (str "dl.players." player)))
     (dl.util.fmessage "Position locked!")
     (dl.util.fmessage "Drone strike in 4")
@@ -110,24 +133,25 @@ Commands:
     (dl.util.fmessage "Drone strike complete."))
 
   (when (= cmd "flare")
-    (let who (or body sender))
+    (let who (if body (->name body) sender))
     (let pos (position (str "dl.players." who)))
     (dl.util.explosion (map + [0 100 0] pos) "TestGrenade")
     (dl.util.fmessage (str "Fired flare above " who)))
 
   (when (= cmd "position")
-    (let player (or body sender))
+    (let player (if body (->name body) sender))
     (let pos (position (str "dl.players." player)))
     (dl.util.fmessage (pos-fmt pos)))
 
   (when (= cmd "heal")
-    (let player (or body sender))
+    (let player (if body (->name body) sender))
     ((str "$dl.players." player ".health") 100)
     (dl.util.fmessage (str "Healed " player)))
 
   (when (and (= cmd "explode") body)
     (let is-near (= (1 parts) "near"))
     (let player ((if is-near 2 1) parts))
+    (let player (->name player))
     (let pos (position (str "dl.players." player)))
     (let pos (if is-near (rand-near pos 48) pos))
     (dl.util.explosion pos "TestGrenade")
