@@ -1,3 +1,4 @@
+;(load "https://phunanon.github.io/InsituxScripts/claymore-dev.txt")
 (function p-info name
   (let prefix (str "dl.players." name))
   {:name name
@@ -98,7 +99,7 @@
   (var n 0)
   (print "first tick")
   (while (and (< n 30) (! off))
-    (wait 1)
+    (wait 0.25)
     (var n (inc n))
     (quarter-second))
   (ticked.connect on-tick))
@@ -106,5 +107,5 @@
 (ticked.kill)
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect on-msg)
-(dl.util.fmessage "DEV7 Claymore chatbot active. Use 'plant' in the chat to plant one.")
+(dl.util.fmessage "DEV8 Claymore chatbot active. Use 'plant' in the chat to plant one.")
 (on-tick)
