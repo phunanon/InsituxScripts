@@ -6,4 +6,7 @@
    :team   (team     prefix)
    :hp     (health   prefix)})
 
+(function p* name key
+  (key (p- name)))
+
 (var p-info p-)
