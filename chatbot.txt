@@ -155,7 +155,7 @@ Commands:
     (let pos (position (str "dl.players." player)))
     (let pos (if is-near (rand-near pos 48) pos))
     (dl.util.explosion pos "TestGrenade")
-    (dl.util.fmessage (str "Exploded " body)))
+    (dl.util.fmessage (str sender " exploded " body)))
 
   (chatbot-extra sender channel msg))
 
