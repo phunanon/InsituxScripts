@@ -1,4 +1,6 @@
 
+;TODO: lower-case commands, check if player exists
+
 ;Poly-fill until higher Insitux version
 (function rand to (/ (rand-num (* to 1000)) 1000))
 (function rand-ab a b (/ (rand-num (* a 1000) (* b 1000)) 1000))
@@ -87,6 +89,7 @@ Commands:
     (let b (if is-to (1 parts) sender))
     (let a (->name a))
     (let b (->name b))
+(print a " " b)
     ((str "$dl.players." a ".position")
      (position (str "dl.players." b)))
     (dl.util.fmessage (str "Teleported " a " to " b)))
