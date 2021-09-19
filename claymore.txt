@@ -21,7 +21,8 @@
        (** (- z0 z1))))))
 
 ;{123 {:id 123 :team "name" :by "name" :pos [x y z]}}
-(var plants {})
+(when (! plants)
+  (var plants {}))
 
 (function boom p
   (dl.util.explosion (:pos (1 p)) "TestGrenade"))
@@ -64,8 +65,8 @@
     (var plants (drop-key plants (:id plant)))
     (dl.util.explosion (:pos plant) "TestGrenade")
     (dl.util.fmessage
-      (str name " tripped " (:by plant) "'s claymore!"))
-    (dl.util.fmessage (str (len plants) " set."))))
+      (str name " tripped " (:by plant) "'s claymore!"
+      (len plants) " left."))))
 
 ;Upon Deadline fix use `for`
 (function as-prefix player
