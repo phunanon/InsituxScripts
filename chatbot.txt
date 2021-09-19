@@ -85,11 +85,10 @@ Commands:
 
   (when (= cmd "teleport")
     (let is-to (= (1 parts) "to"))
-    (let a (if is-to sender (2 parts)))
+    (let a (if is-to sender (1 parts)))
     (let b (if is-to (2 parts) sender))
     (let a (->name a))
     (let b (->name b))
-(print a " " b)
     ((str "$dl.players." a ".position")
      (position (str "dl.players." b)))
     (dl.util.fmessage (str "Teleported " a " to " b)))
