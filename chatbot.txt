@@ -89,6 +89,7 @@ Commands:
     (let b (if is-to (2 parts) sender))
     (let a (->name a))
     (let b (->name b))
+(print a " " b)
     ((str "$dl.players." a ".position")
      (position (str "dl.players." b)))
     (dl.util.fmessage (str "Teleported " a " to " b)))
