@@ -1,6 +1,9 @@
-(function p-info name
+(function p- name
   (let prefix (str "dl.players." name))
-  {:name name
-   :pos  (position prefix)
-   :team (team     prefix)
-   :hp   (health   prefix)})
+  {:name   name
+   :alive? ((str prefix ".is_alive"))
+   :pos    (position prefix)
+   :team   (team     prefix)
+   :hp     (health   prefix)})
+
+(var p-info p-)
