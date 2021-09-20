@@ -61,7 +61,7 @@ Commands:
 
 ;Rewrite in the future, just so much is broken atm
 (function truncate-name name
-  (sect 0 name name-len))
+  (sect name 0 name-len))
 (function try-find-player name
   (var name-len (len name))
   (let names (dl.list_players))
