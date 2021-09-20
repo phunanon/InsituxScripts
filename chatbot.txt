@@ -1,5 +1,6 @@
-
-;TODO: lower-case commands, check if player exists
+;Just note, all this code is garbage at the moment because
+; the version of Insitux in Deadline is old and buggy
+;TODO: lower-case commands
 
 ;Poly-fill until higher Insitux version
 (function rand to (/ (rand-num (* to 1000)) 1000))
@@ -32,6 +33,9 @@
   (let point [(* (0 xz) dist) 0 (* (1 xz) dist)])
   (map + point pos))
 
+(function player? name
+  (and ((dl.list_players) name) (is_alive (str "dl.players." name))))
+
 ;(function frac->coords map-name xyz
 ;  (let dimensions {
 ;    "dl_shipment" [[639 424 -134] [-494 414 -551]]})
@@ -54,12 +58,25 @@ Commands:
   'teleport [player]' or 'teleport to [player]' - teleport player to you or vice versa")
 
 (var players [])
-;Try rewriting in the future, so much broken atm
+
+;Rewrite in the future, just so much is broken atm
+(function truncate-name name
+  (sect 0 name name-len))
+(function try-find-player name
+  (let name-len (len name))
+  (let names (dl.list_players))
+  (let short-names (map truncate-name names))
+  (let i (idx short-names name))
+  (if i (i names)))
 (function ->name text
   (let nums (ran (len players)))
   (let nums (map inc nums))
   (let i (idx (map str nums) text))
-  (if i (i players) text))
+  (let player
+    (if i
+      (i players)
+      (or ((dl.list_players) text) (try-find-player text))))
+  (if (player? player) player null))
 
 (function sent sender channel msg
 ;Upon higher Insitux version
@@ -89,75 +106,96 @@ Commands:
     (let b (if is-to (2 parts) sender))
     (let a (->name a))
     (let b (->name b))
-    ((str "$dl.players." a ".position")
-     (position (str "dl.players." b)))
-    (dl.util.fmessage (str "Teleported " a " to " b)))
+    (when (and a b)
+      ((str "$dl.players." a ".position")
+      (position (str "dl.players." b)))
+      (dl.util.fmessage (str "Teleported " a " to " b)))
+    (if (! (and a b))
+      (dl.util.fmessage "Player not found or already dead!")))
 
   (when (and (= cmd "brrr") body)
     (let player (->name body))
-    (dl.util.fmessage (str "Airstrike target locked: " player))
-    (wait 1)
-    (dl.util.fmessage "Coming in hot in 5")
-    (wait 1)
-    (dl.util.fmessage "4")
-    (wait 1)
-    (dl.util.fmessage "3")
-    (wait 1)
-    (dl.util.fmessage "2...")
-    (wait 2)
-    (let pos (position (str "dl.players." player)))
-    (let i 0)
-    (while (< i 100)
-      (let i (inc i))
-      (wait .01)
-      (let rands [(rand 10) 0 (rand 10)])
-      (dl.util.explosion (map + [(- (* i 2) 100) 0 0] rands pos)))
-    (dl.util.fmessage (str player " has been brrr'd.")))
+    (when (! player)
+      (dl.util.fmessage "Player not found or already dead!"))
+    (when player
+      (dl.util.fmessage (str "Airstrike target locked: " player))
+      (wait 1)
+      (dl.util.fmessage "Coming in hot in 5")
+      (wait 1)
+      (dl.util.fmessage "4")
+      (wait 1)
+      (dl.util.fmessage "3")
+      (wait 1)
+      (dl.util.fmessage "2...")
+      (wait 2)
+      (let pos (position (str "dl.players." player)))
+      (let i 0)
+      (while (< i 100)
+        (let i (inc i))
+        (wait .01)
+        (let rands [(rand 10) 0 (rand 10)])
+        (dl.util.explosion (map + [(- (* i 2) 100) 0 0] rands pos)))
+      (dl.util.fmessage (str player " has been brrr'd."))))
 
   (when (= cmd "drone")
     (let player (if body (->name body) sender))
-    (let pos (position (str "dl.players." player)))
-    (dl.util.fmessage "Position locked!")
-    (dl.util.fmessage "Drone strike in 4")
-    (wait 1)
-    (dl.util.fmessage "3")
-    (wait 1)
-    (dl.util.fmessage "2...")
-    (wait 2)
-    ;Replace with `range` once fixed in Deadline
-    (let i 0)
-    (let lim (+ 5 (rand 5)))
-    (while (< i lim)
-      (let i (inc i))
-      (wait .25)
-      (let rands [(rand-ab -50 50) 30 (rand-ab -50 50)])
-      (dl.util.explosion (map + rands pos)))
-    (dl.util.fmessage "Drone strike complete."))
+    (when (! player)
+      (dl.util.fmessage "Player not found or already dead!"))
+    (when player
+      (let pos (position (str "dl.players." player)))
+      (dl.util.fmessage "Position locked!")
+      (dl.util.fmessage "Drone strike in 4")
+      (wait 1)
+      (dl.util.fmessage "3")
+      (wait 1)
+      (dl.util.fmessage "2...")
+      (wait 2)
+      ;Replace with `range` once fixed in Deadline
+      (let i 0)
+      (let lim (+ 5 (rand 5)))
+      (while (< i lim)
+        (let i (inc i))
+        (wait .25)
+        (let rands [(rand-ab -50 50) 30 (rand-ab -50 50)])
+        (dl.util.explosion (map + rands pos)))
+      (dl.util.fmessage "Drone strike complete.")))
 
   (when (= cmd "flare")
     (let who (if body (->name body) sender))
-    (let pos (position (str "dl.players." who)))
-    (dl.util.explosion (map + [0 100 0] pos) "TestGrenade")
-    (dl.util.fmessage (str "Fired flare above " who)))
+    (when (! who)
+      (dl.util.fmessage "Player not found or already dead!"))
+    (when who
+      (let pos (position (str "dl.players." who)))
+      (dl.util.explosion (map + [0 100 0] pos) "TestGrenade")
+      (dl.util.fmessage (str "Fired flare above " who))))
 
   (when (= cmd "position")
     (let player (if body (->name body) sender))
-    (let pos (position (str "dl.players." player)))
-    (dl.util.fmessage (pos-fmt pos)))
+    (when (! player)
+      (dl.util.fmessage "Player not found or already dead!"))
+    (when player
+      (let pos (position (str "dl.players." player)))
+      (dl.util.fmessage (pos-fmt pos))))
 
   (when (= cmd "heal")
     (let player (if body (->name body) sender))
-    ((str "$dl.players." player ".health") 100)
-    (dl.util.fmessage (str "Healed " player)))
+    (when (! player)
+      (dl.util.fmessage "Player not found or already dead!"))
+    (when player
+      ((str "$dl.players." player ".health") 100)
+      (dl.util.fmessage (str "Healed " player))))
 
   (when (and (= cmd "explode") body)
     (let is-near (= (1 parts) "near"))
     (let player ((if is-near 2 1) parts))
     (let player (->name player))
-    (let pos (position (str "dl.players." player)))
-    (let pos (if is-near (rand-near pos 48) pos))
-    (dl.util.explosion pos "TestGrenade")
-    (dl.util.fmessage (str sender " exploded " body)))
+    (when (! player)
+      (dl.util.fmessage "Player not found or already dead!"))
+    (when player
+      (let pos (position (str "dl.players." player)))
+      (let pos (if is-near (rand-near pos 48) pos))
+      (dl.util.explosion pos "TestGrenade")
+      (dl.util.fmessage (str sender " exploded " body))))
 
   (chatbot-extra sender channel msg))
 
