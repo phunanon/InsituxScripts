@@ -2,9 +2,9 @@
 (load (str git-prefix "funcs/p-info.txt"))
 (function git-load file
   (load (str git-prefix "chatbot/" file ".clj")))
-(git-load "list.clj")
-(git-load "flak.clj")
-(git-load "cmds.clj")
+(git-load "list")
+(git-load "flak")
+(git-load "cmds")
 
 ;Replace with usage of (symbols) upon Insitux version 0918
 (var commands ["list" "cmds" "flak"])
