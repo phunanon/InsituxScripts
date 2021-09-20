@@ -63,7 +63,7 @@ Commands:
 (function truncate-name name
   (sect 0 name name-len))
 (function try-find-player name
-  (let name-len (len name))
+  (var name-len (len name))
   (let names (dl.list_players))
   (let short-names (map truncate-name names))
   (let i (idx short-names name))
