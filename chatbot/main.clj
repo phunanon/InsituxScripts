@@ -1,6 +1,7 @@
 (var git-prefix "https://phunanon.github.io/InsituxScripts/")
 (load (str git-prefix "funcs/p-info.txt"))
-(function git-load (load (str git-prefix "chatbot/" # ".clj")))
+(function git-load file
+  (load (str git-prefix "chatbot/" file ".clj")))
 (git-load "list.clj")
 (git-load "flak.clj")
 (git-load "cmds.clj")
