@@ -21,8 +21,8 @@
        (** (- z0 z1))))))
 
 ;{123 {:id 123 :team "name" :by "name" :pos [x y z]}}
-(when (! plants)
-  (var plants {}))
+;Use (symbols) in the future to check if already defined
+(var plants {})
 
 (function boom p
   (dl.util.explosion (:pos (1 p)) "TestGrenade"))
