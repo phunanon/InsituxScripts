@@ -34,7 +34,8 @@
   (map + point pos))
 
 (function player? name
-  (and ((dl.list_players) name) (is_alive (str "dl.players." name))))
+  (and ((dl.list_players) name)
+       ((str "dl.players." name ".is_alive"))))
 
 ;(function frac->coords map-name xyz
 ;  (let dimensions {
@@ -45,7 +46,7 @@
 
 ;Replace ' with " upon Insitux version 0914
 (var cmds "Note: replace [player] with player name or number via 'players'
-  examples: 'heal XxPlayerxX' or 'heal 3'
+  examples: 'heal XxPlayerxX' or 'heal Xx' or 'heal 3'
 Commands:
   'players' - list players each with a number
   'team security' or 'team insurgent' - switch to either team
@@ -57,18 +58,18 @@ Commands:
   'explode near [player]' - cause an explosion near the player (non-lethal)
   'teleport [player]' or 'teleport to [player]' - teleport player to you or vice versa")
 
-(var players [])
-
 ;Rewrite in the future, just so much is broken atm
 (function truncate-name name
-  (sect name 0 name-len))
+  (sect name 0 (dec name-len)))
 (function try-find-player name
   (var name-len (len name))
   (let names (dl.list_players))
   (let short-names (map truncate-name names))
+  (print name " " name-len short-names)
   (let i (idx short-names name))
   (if i (i names)))
 (function ->name text
+  (let players (dl.list_players))
   (let nums (ran (len players)))
   (let nums (map inc nums))
   (let i (idx (map str nums) text))
@@ -92,8 +93,7 @@ Commands:
     (dl.util.fmessage cmds))
 
   (when (= cmd "players")
-    (var players (dl.list_players))
-    (dl.util.fmessage (numbered players)))
+    (dl.util.fmessage (numbered (dl.list_players))))
 
   (when (and (= cmd "team") (["security" "insurgent"] body))
     ((str "$dl.players." sender ".team")
@@ -111,12 +111,12 @@ Commands:
       (position (str "dl.players." b)))
       (dl.util.fmessage (str "Teleported " a " to " b)))
     (if (! (and a b))
-      (dl.util.fmessage "Player not found or already dead!")))
+      (dl.util.fmessage "Player not found or dead!")))
 
   (when (and (= cmd "brrr") body)
     (let player (->name body))
     (when (! player)
-      (dl.util.fmessage "Player not found or already dead!"))
+      (dl.util.fmessage "Player not found or dead!"))
     (when player
       (dl.util.fmessage (str "Airstrike target locked: " player))
       (wait 1)
@@ -140,7 +140,7 @@ Commands:
   (when (= cmd "drone")
     (let player (if body (->name body) sender))
     (when (! player)
-      (dl.util.fmessage "Player not found or already dead!"))
+      (dl.util.fmessage "Player not found or dead!"))
     (when player
       (let pos (position (str "dl.players." player)))
       (dl.util.fmessage "Position locked!")
@@ -163,7 +163,7 @@ Commands:
   (when (= cmd "flare")
     (let who (if body (->name body) sender))
     (when (! who)
-      (dl.util.fmessage "Player not found or already dead!"))
+      (dl.util.fmessage "Player not found or dead!"))
     (when who
       (let pos (position (str "dl.players." who)))
       (dl.util.explosion (map + [0 100 0] pos) "TestGrenade")
@@ -172,7 +172,7 @@ Commands:
   (when (= cmd "position")
     (let player (if body (->name body) sender))
     (when (! player)
-      (dl.util.fmessage "Player not found or already dead!"))
+      (dl.util.fmessage "Player not found or dead!"))
     (when player
       (let pos (position (str "dl.players." player)))
       (dl.util.fmessage (pos-fmt pos))))
@@ -180,7 +180,7 @@ Commands:
   (when (= cmd "heal")
     (let player (if body (->name body) sender))
     (when (! player)
-      (dl.util.fmessage "Player not found or already dead!"))
+      (dl.util.fmessage "Player not found or dead!"))
     (when player
       ((str "$dl.players." player ".health") 100)
       (dl.util.fmessage (str "Healed " player))))
@@ -190,7 +190,7 @@ Commands:
     (let player ((if is-near 2 1) parts))
     (let player (->name player))
     (when (! player)
-      (dl.util.fmessage "Player not found or already dead!"))
+      (dl.util.fmessage "Player not found or dead!"))
     (when player
       (let pos (position (str "dl.players." player)))
       (let pos (if is-near (rand-near pos 48) pos))
