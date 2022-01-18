@@ -48,7 +48,7 @@
 
 (function boom who is-near
   (-> (plr who :pos)
-     @(if is-near (rand-near pos 48))
+     @(if is-near (rand-circle-point pos 48))
      #(dl.util.explosion % "TestGrenade"))
   (str "Exploded " (if is-near "near " "") who))
 
