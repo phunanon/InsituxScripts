@@ -17,6 +17,10 @@ Optionally extend this chatbot by writing your own functions **after** you have 
   … do something …)
 ```
 
+### Claymores
+
+`(load "https://phunanon.github.io/InsituxScripts/claymore.txt")`
+
 ### (For Coders) Import Function
 `(load "https://phunanon.github.io/InsituxScripts/funcs.txt")`  
 Enables loading functions from the `func` directory of this repository as easy as:  

@@ -43,8 +43,6 @@
     (var plants {})
     (dl.util.fmessage "All claymores detonated!"))
 
-  ;Upon version 0914
-  ;(when (!= message "plant") (return))
   (when (= message "plant")
     (let player (p-info sender))
     (let team   (:team player))
