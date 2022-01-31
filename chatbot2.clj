@@ -1,5 +1,4 @@
 (var cmds "Examples: \"heal XxPlayerxX\" or \"heal Xx\"
-  \"players\" - list players on each team
   \"team security\" or \"team insurgent\" - switch to either team
   \"heal\" or \"heal [player]\" - heal you or a player fully
   \"drone\" or \"drone [player]\" - drone strike on your or player's position
@@ -11,55 +10,70 @@
   \"plant\" - plant claymore where you stand")
 
 (function rand-circle-point position radius
+  (var r radius)
   (-> (rand (* 2 PI))
-     #[(cos %) 0 (sin %)]
-      (map (* radius))
+      (fn a [(cos a) 0 (sin a)])
+      (map (* r))
      @(map + position)))
 
-(function ->name name
-  (find #(starts? (lower-case name) (lower-case %))
+(function n. name
+  (var n name)
+  (find (fn p (.. starts? (map lower-case [n p])))
         (dl.list_players)))
 
-;e.g. (plr "Insitux" :pos [0 0 0])
-;     (plr "ins" :pos) -> [0 0 0]
-(function plr name key val
-  (let prop (match key :pos "position" :team "team" :hp "health"))
-  (catch ;in case the player is dead or something else is wrong
+(function grenade pos
+  (print pos)
+  (dl.util.explosion pos "TestGrenade"))
+
+(function plr who key val
+  (let prop (match key :pos "position" :team "team" :hp "health")
+       prop (str "$dl.players." who "." prop))
+  (if (= key :alive?)
+      (return ((str "dl.players." who ".is_alive"))))
+  (catch
     (if val
-      ((str "$dl.players." (->name name) prop) val)
-      (prop (str "dl.players." (->name name))))
-    :successful
+      (do (prop val) :success)
+      (eval prop))
     (print errors)))
 
-(function alive? who
-  ((str "dl.players." who ".is_alive")))
+(function monologue messages delay
+  (var d (or delay 1))
+  (map (fn msg (dl.util.fmessage msg)
+               (wait d))
+       messages))
 
-(var monologue
-  @(map #(do (dl.util.message %) (wait 1))))
-
+(function players
+  (-> (dl.list_players)
+      (map (fn who (str (plr who :team) ": " who)))
+      (fn players (monologue players .2))))
 
 (function teleport from to
-  (and (plr from :pos (plr to :pos))
-       (str from " teleported to " to)))
+  (if (plr from :pos (plr to :pos))
+      (str from " teleported to " to)))
 
 (function heal who
-  (and (plr who :hp 100)
-       (str "Healed " who)))
+  (if (plr who :hp 100)
+      (str "Healed " who)))
+
+(function team who team-name
+  (let name ((starts? "i" team-name) "insurgent" "security"))
+  (if (plr who :team name)
+      (str who " now " name)))
 
 (function boom who is-near
   (-> (plr who :pos)
-     @(if is-near (rand-circle-point pos 48))
-     #(dl.util.explosion % "TestGrenade"))
+      (fn pos (is-near (rand-circle-point pos 48) pos))
+      (fn pos (dl.util.explosion pos "TestGrenade")))
   (str "Exploded " (if is-near "near " "") who))
 
 (function flare who
   (-> (plr who :pos)
      @(map + [0 100 0])
-     #(dl.util.explosion % "TestGrenade"))
+      (fn pos (dl.util.explosion pos "TestGrenade")))
   (str "Fired flare above " who))
 
 (function brrr who
-  (if! (alive? who) (return))
+  (if! (plr who :alive?) (return))
   (monologue [
     (str "Airstrike target locked: " who)
     "Coming in hot in 5" "4" "3" "2..."])
@@ -70,53 +84,60 @@
     (let! i inc)
     (wait .01)
     (-> [(rand 10) 0 (rand 10)]
-       #(dl.util.explosion (map + [(- (* i 2) 100) 0 0] % pos))))
+       @(map + [(- (* i 2) 100) 0 0] pos)
+        grenade))
   (str who " has been brrr'd."))
 
 (function drone who
-  (if! (alive? who) (return))
+  (if! (plr who :alive?) (return))
   (let pos (plr who :pos))
   (monologue [
     "Position locked!" "Drone strike in 4" "3" "2..."])
   (wait 1)
-  ;Replace with `range` once fixed in Deadline
   (let i 0 lim (rand 5 10))
   (while (< i lim)
     (let! i inc)
     (wait .25)
     (-> [(rand -50 50) 30 (rand -50 50)]
-       #(dl.util.explosion (map + % pos))))
+       @(map + pos)
+        grenade))
   "Drone strike complete.")
+
+(function plant who
+  "Not yet implemented.")
 
 (function command sender msg
   (let parts (split (lower-case msg))
        [_ b c d] parts)
   (match parts
     ["cmds"]          cmds
-    ["players"]       (join (dl.list_players))
+    ["players"]       (players)
     ["heal"]          (heal sender)
-    ["heal" _]        (heal b)
-    ["team"]          (str sender " is in team " (plr sender :team))
-    ["team" _]        (and (plr sender :team b) (str sender " is in team " b))
-    ["tp" _ "here"]   (teleport b sender)
-    ["tp" _ "to" _]   (teleport b d)
-    ["tp" "to" _]     (teleport sender c)
-    ["boom" _]        (boom b false)
-    ["boom" "near" _] (boom b true)
+    ["heal" _]        (heal (n. b))
+    ["team" _]        (team sender b)
+    ["team"]          (str sender " is " (plr sender :team))
+    ["tp" _ "here"]   (teleport (n. b) sender)
+    ["tp" _ "to" _]   (teleport (n. b) (n. d))
+    ["tp" "to" _]     (teleport sender (n. c))
+    ["boom" _]        (boom (n. b) false)
+    ["boom" "near" _] (boom (n. c) true)
     ["flare"]         (flare sender)
-    ["flare" _]       (flare b)
-    ["brrr" _]        (brrr b)
+    ["flare" _]       (flare (n. b))
+    ["brrr" _]        (brrr (n. b))
     ["drone"]         (drone sender)
-    ["drone" _]       (drone b)
+    ["drone" _]       (drone (n. b))
+    ["plant"]         (plant (n. b))
     :not-a-command))
+
+(function fmessage m (print m) (dl.util.fmessage m))
 
 (function on-message sender _ msg
   (let result (command sender msg))
-  (if (!= result :not-a-command)
-    (dl.util.fmessage
+  (when (!= result :not-a-command)
+    (fmessage
       (if (starts? "(" msg)
         (catch (eval msg) errors)
-        (or result "There was a problem. Maybe the player isn't alive.")))))
+        (or result "Didn't work, maybe player is dead.")))))
 
 (dl.events.on_chat_message.kill)
 (dl.events.on_chat_message.connect on-message)
