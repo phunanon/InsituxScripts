@@ -16,10 +16,20 @@
       (map (* r))
      @(map + position)))
 
+(function is-near? x0 y0 z0 x1 y1 z1 dist
+  (> dist (sqrt
+    (+ (** (- x0 x1))
+       (** (- y0 y1))
+       (** (- z0 z1))))))
+
 (function n. name
   (var n name)
   (find (fn p (.. starts? (map lower-case [n p])))
         (dl.list_players)))
+
+(function alive-players
+  (filter #((str "dl.players." % ".is_alive"))
+          (dl.list_players)))
 
 (function grenade pos
   (dl.util.explosion pos "TestGrenade"))
@@ -40,11 +50,6 @@
   (map (fn msg (dl.util.fmessage msg)
                (wait d))
        messages))
-
-(function players
-  (-> (dl.list_players)
-      (map (fn who (str (plr who :team) ": " who)))
-      (fn players (monologue players .2))))
 
 (function teleport from to
   (let pos (plr to :pos))
@@ -105,16 +110,45 @@
         grenade))
   "Drone strike complete.")
 
+;;;;; claymores
+
+;{[x y z] {:team name :by name}}
+(if! ((symbols) "plants")
+  (var plants {}))
+
 (function plant who
-  "Not yet implemented.")
+  (let pos (plr who :pos))
+  (if! pos (return))
+  (var! plants into {pos {:team (plr who :team) :by who}})
+  (str "Claymore planted by " who ". " (len plants) " set."))
+
+(function player-claymore player claymore
+  (let [plant-pos info] claymore
+       player-pos       (plr player :pos)
+       player-team      (plr player :team)
+       plant-team       (:team info))
+  (when (and (.. is-near? plant-pos player-pos 30)
+             (!= player-team plant-team))
+    (var! plants push plant-pos)
+    (grenade plant-pos)
+    (var p player b (:by info))
+    (-> (str (len plants) " left.")
+       @(str p " tripped " b "'s claymore! ")
+        fmessage)))
+
+(function on-tick
+  ;check for players near claymores
+  (for player-claymore (alive-players) plants))
+
+(ticked.kill)
+(ticked.connect on-tick)
+;;;;;
 
 (function command sender msg
   (var parts (split " " (lower-case msg))
-       [_ b c d] parts
-       d (3 parts))
+       [_ b c d] parts)
   (match parts
     ["cmds"]          cmds
-    ["players"]       (players)
     ["heal"]          (heal sender)
     ["heal" _]        (heal (n. b))
     ["team" _]        (team sender b)
@@ -129,7 +163,7 @@
     ["brrr" _]        (brrr (n. b))
     ["drone"]         (drone sender)
     ["drone" _]       (drone (n. b))
-    ["plant"]         (plant (n. b))
+    ["plant"]         (plant sender)
     :not-a-command))
 
 (function fmessage m (print m) (dl.util.fmessage m))
