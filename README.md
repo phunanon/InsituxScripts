@@ -9,13 +9,8 @@ Then copy-paste the `load` command provided with each script.
 If there are any problems or feedback join the [**Discord server**](https://discord.gg/w3Fc4YZ9Qw).
 
 ### Chatbot
-`(load "https://phunanon.github.io/InsituxScripts/chatbot.txt")`  
-Allows players to enter useful and fun commands in the chat such as for team switching, teleporting, causing explosions, killing with *brrr*...  
-Optionally extend this chatbot by writing your own functions **after** you have loaded it:  
-```clj
-(function chatbot-extra sender channel message
-  … do something …)
-```
+`(load "https://phunanon.github.io/InsituxScripts/chatbot2.ix")`  
+Allows players to enter useful and fun commands in the chat such as for team switching, teleporting, causing explosions, killing with *brrr*...
 
 ### Claymores
 
