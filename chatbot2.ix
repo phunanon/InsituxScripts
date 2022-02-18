@@ -18,12 +18,10 @@
 
 (function n. name
   (var n name)
-  (print "n." n)
   (find (fn p (.. starts? (map lower-case [n p])))
         (dl.list_players)))
 
 (function grenade pos
-  (print pos)
   (dl.util.explosion pos "TestGrenade"))
 
 (function plr who key val
@@ -49,7 +47,6 @@
       (fn players (monologue players .2))))
 
 (function teleport from to
-(print "teleport " from " to " to)
   (let pos (plr to :pos))
   (if! pos (return))
   (if (plr from :pos pos)
@@ -115,7 +112,6 @@
   (var parts (split " " (lower-case msg))
        [_ b c d] parts
        d (3 parts))
-(print parts (3 parts) d)
   (match parts
     ["cmds"]          cmds
     ["players"]       (players)
@@ -140,7 +136,6 @@
 
 (function on-message sender _ msg
   (let result (command sender msg))
-(print result)
   (when (!= result :not-a-command)
     (fmessage
       (if (starts? "(" msg)
