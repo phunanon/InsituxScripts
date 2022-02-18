@@ -1,12 +1,12 @@
 (var cmds "Examples: \"heal XxPlayerxX\" or \"heal Xx\"
   \"team security\" or \"team insurgent\" - switch to either team
   \"heal\" or \"heal [player]\" - heal you or a player fully
-  \"drone\" or \"drone [player]\" - drone strike on your or player's position
+  \"drone\" or \"drone [player]\" - drone strike on your or player
   \"brrr [player]\" - airstrike on player
-  \"flare\" or \"flare [player]\" - fire a flare above yourself or another player
+  \"flare\" or \"flare [player]\" - fire a flare above yourself or player
   \"boom [player]\" - kill player with an explosion
-  \"boom near [player]\" - cause an explosion near the player (non-lethal)
-  \"tp [player] here\" or \"tp to [player]\" or \"tp [player1] to [player2]\" - teleport
+  \"boom near [player]\" - explosion near the player (non-lethal)
+  \"tp [player] here\" or \"tp to [player]\" or \"tp [player1] to [player2]\"
   \"plant\" - plant claymore where you stand")
 
 (function rand-circle-point position radius
@@ -18,6 +18,7 @@
 
 (function n. name
   (var n name)
+  (print "n." n)
   (find (fn p (.. starts? (map lower-case [n p])))
         (dl.list_players)))
 
@@ -34,7 +35,7 @@
     (if val
       (do (prop val) :success)
       (eval prop))
-    (print errors)))
+    (print "plr errors: " errors)))
 
 (function monologue messages delay
   (var d (or delay 1))
@@ -48,7 +49,10 @@
       (fn players (monologue players .2))))
 
 (function teleport from to
-  (if (plr from :pos (plr to :pos))
+(print "teleport " from " to " to)
+  (let pos (plr to :pos))
+  (if! pos (return))
+  (if (plr from :pos pos)
       (str from " teleported to " to)))
 
 (function heal who
@@ -61,9 +65,10 @@
       (str who " now " name)))
 
 (function boom who is-near
-  (-> (plr who :pos)
-      (fn pos (is-near (rand-circle-point pos 48) pos))
-      (fn pos (dl.util.explosion pos "TestGrenade")))
+  (let pos (plr who :pos))
+  (if! pos (return))
+  (-> (is-near (rand-circle-point pos 48) pos)
+     #(dl.util.explosion % "TestGrenade"))
   (str "Exploded " (if is-near "near " "") who))
 
 (function flare who
@@ -107,8 +112,10 @@
   "Not yet implemented.")
 
 (function command sender msg
-  (let parts (split (lower-case msg))
-       [_ b c d] parts)
+  (var parts (split " " (lower-case msg))
+       [_ b c d] parts
+       d (3 parts))
+(print parts (3 parts) d)
   (match parts
     ["cmds"]          cmds
     ["players"]       (players)
@@ -119,8 +126,8 @@
     ["tp" _ "here"]   (teleport (n. b) sender)
     ["tp" _ "to" _]   (teleport (n. b) (n. d))
     ["tp" "to" _]     (teleport sender (n. c))
-    ["boom" _]        (boom (n. b) false)
     ["boom" "near" _] (boom (n. c) true)
+    ["boom" _]        (boom (n. b) false)
     ["flare"]         (flare sender)
     ["flare" _]       (flare (n. b))
     ["brrr" _]        (brrr (n. b))
@@ -133,6 +140,7 @@
 
 (function on-message sender _ msg
   (let result (command sender msg))
+(print result)
   (when (!= result :not-a-command)
     (fmessage
       (if (starts? "(" msg)
