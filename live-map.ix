@@ -1,0 +1,28 @@
+(var mid (round (time)))
+
+(function alive-players
+  (filter #((str "dl.players." % ".is_alive"))
+          (dl.list_players)))
+
+(function report-position player
+  (let pos   (position (str "dl.players." player))
+       [x _ y] (map round pos))
+  (catch
+    (load
+      (str "https://insitux.repl.co/deadline-live/" mid "/" player "/" x "/" y))
+    (print args errors)))
+
+(function report-positions
+  (-> (alive-players)
+      (map report-position)))
+
+(var prev-update (time))
+(function on-tick
+  (when (< (+ prev-update 4000) (time))
+    (print "sending updates")
+    (var prev-update (time))
+    (clear)
+    (report-positions)))
+
+(ticked.kill)
+(ticked.connect on-tick)
