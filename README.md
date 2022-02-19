@@ -8,15 +8,10 @@ Open the console in a Deadline match (in a VIP server) by pressing \`
 Then copy-paste the `load` command provided with each script.  
 If there are any problems or feedback join the [**Discord server**](https://discord.gg/w3Fc4YZ9Qw).
 
-### Chatbot
+### Chatbot & Claymores
 `(load "https://phunanon.github.io/InsituxScripts/chatbot2.ix")`  
 Allows players to enter useful and fun commands in the chat such as for team switching, teleporting, causing explosions, killing with *brrr*...
 
-### Claymores
+### Deadline-live
 
-`(load "https://phunanon.github.io/InsituxScripts/claymore.txt")`
-
-### (For Coders) Import Function
-`(load "https://phunanon.github.io/InsituxScripts/funcs.txt")`  
-Enables loading functions from the `func` directory of this repository as easy as:  
-`(load-func "is-near?")`
+[Explained here](https://insitux.repl.co/deadline-live). Watch Deadline games in realtime!
