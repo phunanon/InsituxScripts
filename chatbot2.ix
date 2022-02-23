@@ -1,3 +1,5 @@
+;(load "https://phunanon.github.io/InsituxScripts/chatbot2.ix")
+
 (var cmds "Examples: \"heal XxPlayerxX\" or \"heal Xx\"
   \"team security\" or \"team insurgent\" - switch to either team
   \"heal\" or \"heal [player]\" - heal you or a player fully
@@ -25,7 +27,7 @@
 (function n. name
   (var n name)
   (find (fn p (.. starts? (map lower-case [n p])))
-        (dl.list_players)))
+        (alive-players)))
 
 (function alive-players
   (filter #((str "dl.players." % ".is_alive"))
