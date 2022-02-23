@@ -36,15 +36,16 @@
 (function grenade pos
   (dl.util.explosion pos "TestGrenade"))
 
-(function plr who key val
-  (let prop (match key :pos "position" :team "team" :hp "health")
-       prop (str "$dl.players." who "." prop))
+(var props {:pos "position" :team "team" :hp "health"})
+(function plr who key value
+  (let prop (props key)
+       evar (str "dl.players." who))
   (if (= key :alive?)
       (return ((str "dl.players." who ".is_alive"))))
   (catch
-    (if val
-      (do (prop val) :success)
-      (eval prop))
+    (if value
+      (do ((str "$" evar "." prop) value) :success)
+      (prop evar))
     (print "plr errors: " errors)))
 
 (function monologue messages delay
@@ -63,7 +64,7 @@
   (if (plr who :hp 100)
       (str "Healed " who)))
 
-(function team who team-name
+(function team-cmd who team-name
   (let name ((starts? "i" team-name) "insurgent" "security"))
   (if (plr who :team name)
       (str who " now " name)))
@@ -101,7 +102,9 @@
   (if! (plr who :alive?) (return))
   (let pos (plr who :pos))
   (monologue [
-    "Position locked!" "Drone strike in 4" "3" "2..."])
+    (str "Position locked: " who)
+    "Drone strike in 4" "3" "2..."
+  ])
   (wait 1)
   (let i 0 lim (rand 5 10))
   (while (< i lim)
@@ -113,6 +116,7 @@
   "Drone strike complete.")
 
 ;;;;; claymores
+; (monologue (map plant (alive-players)) .1)
 
 ;{[x y z] {:team name :by name}}
 (if! ((symbols) "plants")
@@ -153,7 +157,7 @@
     ["cmds"]          cmds
     ["heal"]          (heal sender)
     ["heal" _]        (heal (n. b))
-    ["team" _]        (team sender b)
+    ["team" _]        (team-cmd sender b)
     ["team"]          (str sender " is " (plr sender :team))
     ["tp" _ "here"]   (teleport (n. b) sender)
     ["tp" _ "to" _]   (teleport (n. b) (n. d))
